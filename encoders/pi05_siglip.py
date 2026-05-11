@@ -3,26 +3,43 @@
 import torch
 
 
+# def load_pi05_siglip(model_name="lerobot/pi05_base", device="cuda"):
+#     """Load SigLIP encoder weights from the pi0.5 base model.
+
+#     Same as pi0 but from pi0.5, which adds hierarchical reasoning with
+#     discrete subtask prediction. The hypothesis is that pi0.5's stronger
+#     language-grounded spatial reasoning demands may push the encoder harder.
+#     """
+#     from lerobot.policies.pi05.modeling_pi05 import PI05Policy
+
+#     policy = PI05Policy.from_pretrained(model_name)
+
+#     # Extract the vision tower from the PaliGemma backbone
+#     vision_tower = policy.model.paligemma_with_expert.paligemma.vision_tower
+#     vision_tower = vision_tower.to(device).eval()
+
+#     from transformers import SiglipImageProcessor
+#     processor = SiglipImageProcessor.from_pretrained("google/siglip-so400m-patch14-384")
+#     processor.size = {"height": 224, "width": 224}
+
+#     return vision_tower, processor
+
 def load_pi05_siglip(model_name="lerobot/pi05_base", device="cuda"):
-    """Load SigLIP encoder weights from the pi0.5 base model.
-
-    Same as pi0 but from pi0.5, which adds hierarchical reasoning with
-    discrete subtask prediction. The hypothesis is that pi0.5's stronger
-    language-grounded spatial reasoning demands may push the encoder harder.
-    """
     from lerobot.policies.pi05.modeling_pi05 import PI05Policy
-
     policy = PI05Policy.from_pretrained(model_name)
-
-    # Extract the vision tower from the PaliGemma backbone
-    vision_tower = policy.model.paligemma_with_expert.paligemma.vision_tower
-    vision_tower = vision_tower.to(device).eval()
-
+    vision_model = (
+        policy.model.paligemma_with_expert.paligemma.vision_tower.vision_model
+    )
+    vision_model = vision_model.to(device).eval()
+    del policy
+    torch.cuda.empty_cache()
+    
     from transformers import SiglipImageProcessor
-    processor = SiglipImageProcessor.from_pretrained("google/siglip-so400m-patch14-384")
+    processor = SiglipImageProcessor.from_pretrained(
+        "google/siglip-so400m-patch14-384"
+    )
     processor.size = {"height": 224, "width": 224}
-
-    return vision_tower, processor
+    return vision_model, processor
 
 
 def extract_features(model, processor, images, device="cuda"):
