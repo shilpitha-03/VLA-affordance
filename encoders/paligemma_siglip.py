@@ -10,25 +10,39 @@ Requires HuggingFace gated access to google/paligemma-3b-pt-224.
 import torch
 
 
+# def load_paligemma_siglip(model_name="google/paligemma-3b-pt-224", device="cuda"):
+#     """Load SigLIP vision tower from PaliGemma-3B pretrained at 224x224.
+
+#     Loads the full PaliGemma model, extracts the vision tower,
+#     and frees the LLM + projector to save memory.
+#     """
+#     from transformers import PaliGemmaForConditionalGeneration, SiglipImageProcessor
+
+#     model = PaliGemmaForConditionalGeneration.from_pretrained(model_name)
+#     vision_tower = model.vision_tower
+#     vision_tower = vision_tower.to(device).eval()
+
+#     processor = SiglipImageProcessor.from_pretrained(model_name)
+
+#     # Free LLM and projector
+#     del model
+#     torch.cuda.empty_cache()
+
+#     return vision_tower, processor
+
 def load_paligemma_siglip(model_name="google/paligemma-3b-pt-224", device="cuda"):
-    """Load SigLIP vision tower from PaliGemma-3B pretrained at 224x224.
-
-    Loads the full PaliGemma model, extracts the vision tower,
-    and frees the LLM + projector to save memory.
-    """
     from transformers import PaliGemmaForConditionalGeneration, SiglipImageProcessor
-
     model = PaliGemmaForConditionalGeneration.from_pretrained(model_name)
-    vision_tower = model.vision_tower
-    vision_tower = vision_tower.to(device).eval()
 
-    processor = SiglipImageProcessor.from_pretrained(model_name)
+    # Inner SiglipVisionTransformer — consistent with raw_siglip's .vision_model
+    vision_model = model.vision_tower.vision_model
+    vision_model = vision_model.to(device).eval()
 
-    # Free LLM and projector
     del model
     torch.cuda.empty_cache()
 
-    return vision_tower, processor
+    processor = SiglipImageProcessor.from_pretrained(model_name)
+    return vision_model, processor
 
 
 def extract_features(model, processor, images, device="cuda"):
