@@ -3,7 +3,7 @@
 How does part / affordance structure evolve as a vision encoder is fine-tuned into a
 Vision-Language-Action (VLA) policy? This project probes that representation across stages.
 
-📄 [Full report](LVB_final_report.pdf)
+<!--📄 [Full report](LVB_final_report.pdf)-->
 
 ## Overview
 
