@@ -85,11 +85,11 @@ PaliGemma (Beyer et al., 2024), UMD (Myers et al., ICRA 2015), FLUX.1 (Black For
 AGD20K (Luo et al., CVPR 2022), DINOv2 (Oquab et al., TMLR 2024). Full list in the report.
 
 
-<!--## Setup
+<!--## Setup -->
 <!-- TODO: dependencies + install -->
 
-## Usage / reproducing the analysis
-<!-- TODO: how to run the probes / regenerate the figures --> -->
+<!--## Usage / reproducing the analysis -->
+<!-- TODO: how to run the probes / regenerate the figures --> 
 
 ## Status
 Graduate course research project, Spring 2026 (research contributor).
